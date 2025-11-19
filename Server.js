@@ -5,6 +5,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const cors = require('cors');
 const dotenv = require('dotenv');
+const MongoStore = require("connect-mongo");
 dotenv.config();
 const User = require('./models/User');
 const Photo = require('./models/Photo');
@@ -18,13 +19,28 @@ const allowedOrigins = [
 ];
 
 app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
+
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGO_URI,
+      collectionName: "sessions",
+    }),
+
+    cookie: {
+      secure: true,        // Render uses HTTPS
+      httpOnly: true,
+      sameSite: "none",    // Required for cross-site cookies
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+    },
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.serializeUser((user, done) => done(null, user.id));
