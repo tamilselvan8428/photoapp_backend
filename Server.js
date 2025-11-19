@@ -12,10 +12,23 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true }));
+const allowedOrigins = [
+  "https://photosgallary.netlify.app",
+  "https://spectacular-genie-15822e.netlify.app"
+];
+
 app.use(cors({
-  origin: "https://photosgallary.netlify.app",
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
