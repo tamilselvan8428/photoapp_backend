@@ -17,8 +17,7 @@ const allowedOrigins = [
   "https://spectacular-genie-15822e.netlify.app"
 ];
 
-app.options('*', cors());
-
+app.use(cors({ origin: process.env.FRONTEND_ORIGIN, credentials: true }));
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
