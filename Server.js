@@ -13,8 +13,8 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: "*",  
-  credentials: false 
+  origin: "https://photosgallary.netlify.app",
+  credentials: true
 }));
 app.use(
   session({
